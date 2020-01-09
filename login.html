@@ -1,0 +1,66 @@
+<html>
+<meta charset="UTF-8">
+
+<head>
+
+    <link href="estilo.css" rel="stylesheet">
+
+    <title>Uma história qualquer</title>
+
+</head>
+
+<body>
+    <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-auth.js"></script>
+
+
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCHYQH5Kk0DKqHf23rdybO_EwvvduKQRXo",
+            authDomain: "umhstqlqr.firebaseapp.com",
+            databaseURL: "https://umhstqlqr.firebaseio.com",
+            projectId: "umhstqlqr",
+            storageBucket: "umhstqlqr.appspot.com",
+            messagingSenderId: "21306722211",
+            appId: "1:21306722211:web:629dba116966bbce65bc16"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+
+
+
+        function login() {
+            var auth = null;
+            firebase.auth().signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("senha").value)
+                .then(function(user) {
+                    window.location.href = "painel.html";
+                    auth = user;
+                }).catch(function(error) {
+                    alert(error);
+
+                });
+
+        }
+
+    </script>
+
+    <center>
+        <br><br><br><br><br>
+        <div id="formContent">
+            <h2>Uma história qualquer</h2><br>
+            <label>E-mail:</label>
+            <input type="text" id="email"><br>
+            <label>Senha:</label>
+            <input type="text" id="senha"><br>
+            <input type="submit" onclick="login()">
+
+            <br>
+        </div>
+    </center>
+</body>
+
+
+</html>

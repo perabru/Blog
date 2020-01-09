@@ -1,0 +1,147 @@
+<html>
+<meta charset="UTF-8">
+
+<head>
+
+    <link href="estilo.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-storage.js"></script>
+
+    <title>Uma história qualquer</title>
+
+</head>
+
+<body>
+
+    <h2 class="preto">Título</h2><br>
+    <input type="text" id="txtTitulo">
+
+    <br>
+    <h2 class="preto">Texto</h2><br>
+    <textarea type="text" id="txtTexto" rows="10" cols="110"></textarea>
+
+    <br>
+    <h2 class="preto">Imagem</h2><br>
+    <input type="file" value="upload" id="fileButton" />
+
+    <br> <br> <br> <br>
+    <label>Progresso:</label>
+    <progress value="0" max="100" id="uploader">0%</progress>
+    <br>
+
+    <br>
+    <br>
+    <label id="lblPath"></label>
+    <br>
+
+    <br><br><br>
+
+    <button class="button button1" onclick="enviarArtigo()">Enviar Artigo</button>
+
+
+</body></html>
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyCHYQH5Kk0DKqHf23rdybO_EwvvduKQRXo",
+        authDomain: "umhstqlqr.firebaseapp.com",
+        databaseURL: "https://umhstqlqr.firebaseio.com",
+        projectId: "umhstqlqr",
+        storageBucket: "umhstqlqr.appspot.com",
+        messagingSenderId: "21306722211",
+        appId: "1:21306722211:web:629dba116966bbce65bc16"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    var refBlog = firebase.database().ref("Artigo");
+
+
+    var uploader = document.getElementById('uploader');
+    var fileButton = document.getElementById('fileButton');
+
+    fileButton.addEventListener('change', function(e) {
+
+        //pega o arquivo
+        var file = e.target.files[0];
+        //cria referencia
+        var storageRed = firebase.storage().ref('imagem/' + file.name);
+
+        //upload file
+        var task = storageRed.put(file);
+
+
+        //atualizar barra
+        task.on('state_changed',
+            function progress(snapshot) {
+
+                var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+                uploader.value = percentage;
+
+
+
+
+
+            },
+
+            function error(err) {
+                alert('Erro: ' + err.toString());
+
+            },
+            function complete() {
+
+                task.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                    console.log('File available at', downloadURL);
+                    document.getElementById("lblPath").innerHTML = downloadURL.toString();
+                    //colocando a imagem do banco
+                    //document.getElementById("myImage").src=  downloadURL.toString();
+
+
+                });
+
+            }
+        );
+
+
+
+    });
+
+
+
+
+
+
+
+
+
+    function enviarArtigo() {
+
+        var mTitulo = document.getElementById("txtTitulo").value;
+        var mArtigo = document.getElementById("txtTexto").value;
+        var lblPath = document.getElementById("lblPath").innerHTML;
+
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        var mPK = btoa(mTitulo);
+
+        today = dd + '/' + mm + '/' + yyyy;
+        var mData =today;
+
+        var result = refBlog.push({
+
+            titulo: mTitulo,
+            artigo: mArtigo,
+            caminho: lblPath,
+            data: mData,
+            flag: mPK
+
+        });
+        alert("Artigo enviado com sucesso");
+    }
+
+</script>
